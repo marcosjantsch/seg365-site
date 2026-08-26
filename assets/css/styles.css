@@ -115,6 +115,20 @@ button {
   border-color: var(--yellow);
 }
 
+.site-nav a.module-access-nav {
+  color: var(--ink);
+  font-weight: 900;
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.site-nav a.module-access-nav:hover,
+.site-nav a.module-access-nav:focus-visible {
+  color: var(--ink);
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
 .primary-action,
 .secondary-action {
   display: inline-flex;
@@ -817,6 +831,38 @@ button {
 .integration-card dd {
   margin: 6px 0 0;
   font-weight: 900;
+}
+
+.integration-card-action {
+  width: 100%;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.integration-fixed-action {
+  position: fixed;
+  z-index: 1000;
+  right: 22px;
+  bottom: 22px;
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  color: var(--white);
+  font-weight: 900;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  border-radius: 999px;
+  box-shadow: 0 14px 34px rgba(23, 32, 41, 0.28);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.integration-fixed-action:hover,
+.integration-fixed-action:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 42px rgba(23, 32, 41, 0.34);
 }
 
 .sequence-grid {
@@ -1545,5 +1591,13 @@ body {
 
   .showcase-copy {
     min-height: auto;
+  }
+
+  .integration-fixed-action {
+    right: 14px;
+    bottom: 14px;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 0.86rem;
   }
 }
