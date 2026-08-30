@@ -93,3 +93,81 @@ if ("IntersectionObserver" in window) {
 
   sections.forEach((section) => observer.observe(section));
 }
+
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const scrollProgress = document.querySelector("[data-scroll-progress]");
+
+function updateScrollProgress() {
+  if (!scrollProgress) return;
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
+  scrollProgress.style.transform = `scaleX(${progress})`;
+}
+
+updateScrollProgress();
+window.addEventListener("scroll", updateScrollProgress, { passive: true });
+window.addEventListener("resize", updateScrollProgress);
+
+if (!prefersReducedMotion) {
+  document.documentElement.classList.add("motion-ready");
+
+  const revealTargets = Array.from(
+    document.querySelectorAll(
+      ".section-heading, .channel-card, .ecosystem-orbit > *, .journey-card, .integration-benefits article, .module-cta, .dds-flow article, .video-showcase, .video-card, .operation-main, .operation-proof article, .plan, .contact > *"
+    )
+  );
+
+  revealTargets.forEach((element, index) => {
+    element.classList.add("reveal-item");
+    element.style.setProperty("--reveal-delay", `${Math.min(index % 5, 4) * 70}ms`);
+  });
+
+  if ("IntersectionObserver" in window) {
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-revealed");
+          revealObserver.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+    );
+    revealTargets.forEach((element) => revealObserver.observe(element));
+  } else {
+    revealTargets.forEach((element) => element.classList.add("is-revealed"));
+  }
+
+  const tiltTargets = Array.from(
+    document.querySelectorAll(".channel-card, .ecosystem-orbit article, .dds-flow article, .plan")
+  );
+
+  tiltTargets.forEach((card) => {
+    card.classList.add("motion-card");
+    card.addEventListener("pointermove", (event) => {
+      if (window.innerWidth < 900 || event.pointerType === "touch") return;
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - 0.5;
+      const y = (event.clientY - rect.top) / rect.height - 0.5;
+      card.style.setProperty("--tilt-x", `${(-y * 3).toFixed(2)}deg`);
+      card.style.setProperty("--tilt-y", `${(x * 4).toFixed(2)}deg`);
+      card.style.setProperty("--glow-x", `${((x + 0.5) * 100).toFixed(1)}%`);
+      card.style.setProperty("--glow-y", `${((y + 0.5) * 100).toFixed(1)}%`);
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--tilt-x", "0deg");
+      card.style.setProperty("--tilt-y", "0deg");
+    });
+  });
+
+  const heroVisual = document.querySelector(".hero-visual");
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!heroVisual || window.innerWidth < 760) return;
+      const offset = Math.min(window.scrollY * 0.045, 28);
+      heroVisual.style.setProperty("--hero-shift", `${offset}px`);
+    },
+    { passive: true }
+  );
+}
